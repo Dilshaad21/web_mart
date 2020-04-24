@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import './product.dart';
 
 class ProductList extends StatelessWidget {
-  static const products = [
-    {'name': 'Laptop', 'price': 23.99, 'rating': 4.0},
-    {'name': 'Smart Phone', 'price': 239.99, 'rating': 5.0},
-    {'name': 'Dualshock 4', 'price': 59.99, 'rating': 5.0},
-  ];
+  final List<Map<String,Object>> products;
+
+  ProductList(@required this.products);
 
   @override
   Widget build(BuildContext context) {

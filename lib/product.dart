@@ -21,7 +21,7 @@ class Product extends StatelessWidget {
                 children: <Widget>[
                   Container(
                     child: Text(
-                      '\$' + price.toString(),
+                      '\$$price',
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,

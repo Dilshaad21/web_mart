@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import './product.dart';
+import './productDetails.dart';
+
+import './product.model.dart';
 
 class ProductList extends StatelessWidget {
   final List<dynamic> products;
@@ -12,10 +15,31 @@ class ProductList extends StatelessWidget {
         children: products != null
             ? [
                 ...products.map((p) {
-                  return Product(
-                    name: p['name'],
-                    price: p['price'] / 1.0,
-                    rating: p['rating'] / 1.0,
+                  return InkWell(
+                    child: Product(
+                      product: ProductModel(
+                        name: p['name'],
+                        price: p['price'] / 1.0,
+                        rating: p['rating'] / 1.0,
+                        description: p['description'],
+                        imageUrl: p['imageUrl'],
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ProductDetails(
+                                    product: ProductModel(
+                                      name: p['name'],
+                                      price: p['price'] / 1.0,
+                                      rating: p['rating'] / 1.0,
+                                      description: p['description'],
+                                      imageUrl: p['imageUrl'],
+                                    ),
+                                    p_id: p['_id'],
+                                  )));
+                    },
                   );
                 }).toList()
               ]

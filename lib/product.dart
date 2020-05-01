@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
-class Product extends StatelessWidget {
-  final String name;
-  final double price;
-  final double rating;
+import './product.model.dart';
 
-  Product({@required this.name, @required this.price, @required this.rating});
+class Product extends StatelessWidget {
+  final ProductModel product;
+  
+  Product({this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -15,13 +14,13 @@ class Product extends StatelessWidget {
       child: Container(
         child: Row(
           children: <Widget>[
-            Text('Image'),
+            Image.network(product.imageUrl,fit: BoxFit.cover,width:150),
             Container(
               child: Column(
                 children: <Widget>[
                   Container(
                     child: Text(
-                      '\$$price',
+                      '\$${product.price}',
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -32,11 +31,11 @@ class Product extends StatelessWidget {
                     padding: EdgeInsets.symmetric(horizontal: 5, vertical: 10),
                   ),
                   Text(
-                    name,
+                    product.name,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   RatingBarIndicator(
-                      rating: rating,
+                      rating: product.rating,
                       itemBuilder: (context, index) => Icon(
                             Icons.star,
                             color: Colors.amber,

@@ -43,42 +43,44 @@ class LayoutState extends State<Layout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('WebMart'),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text('User'),
-              decoration: BoxDecoration(color: Colors.blue),
+        appBar: AppBar(
+          title: Text('WebMart'),
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              DrawerHeader(
+                child: Text('User'),
+                decoration: BoxDecoration(color: Colors.blue),
+              ),
+              ListTile(
+                  title: Text('Home'),
+                  onTap: () {
+                    setState(() {
+                      navigator = '/home';
+                    });
+                    Navigator.pop(context);
+                  }),
+              ListTile(
+                  title: Text('Add Product'),
+                  onTap: () {
+                    setState(() {
+                      navigator = '/add-product';
+                    });
+                    Navigator.pop(context);
+                  }),
+            ],
+          ),
+        ),
+        body: Container(
+          child: SingleChildScrollView(
+            child: Container(
+              child: _displayContents(navigator),
+              margin: EdgeInsets.symmetric(vertical: 6, horizontal: 0),
             ),
-            ListTile(
-                title: Text('Home'),
-                onTap: () {
-                  setState(() {
-                    navigator = '/home';
-                  });
-                  Navigator.pop(context);
-                }),
-            ListTile(
-                title: Text('Add Product'),
-                onTap: () {
-                  setState(() {
-                    navigator = '/add-product';
-                  });
-                  Navigator.pop(context);
-                }),
-          ],
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          child: _displayContents(navigator),
-          margin: EdgeInsets.symmetric(vertical: 6, horizontal: 0),
-        ),
-      ),
-    );
+          ),
+          height: MediaQuery.of(context).size.height,
+        ));
   }
 }

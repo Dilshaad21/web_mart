@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
-class AddProduct extends StatefulWidget {
+import './product.model.dart';
+import './layout.dart';
 
+class AddProduct extends StatefulWidget {
   var products;
 
   AddProduct(this.products);
@@ -13,61 +15,89 @@ class AddProduct extends StatefulWidget {
 }
 
 class _AddProductState extends State<AddProduct> {
-  
   var products;
   _AddProductState(this.products);
-  
+
   final nameController = TextEditingController();
   final priceController = TextEditingController();
+  final descpController = TextEditingController();
+  final imageController = TextEditingController();
 
-  onSubmit() async {
-    var obj = {
-      'name': nameController.text,
-      'price': double.parse(priceController.text),
-      'rating': 0.00,
-    };
+  onSubmit(context) async {
+    var product = ProductModel(
+        name: nameController.text,
+        price: double.parse(priceController.text),
+        rating: 0.00,
+        imageUrl: imageController.text,
+        description: descpController.text);
 
-    var object = jsonEncode(obj);
+    var object = jsonEncode(product.toMap());
     var res = await http.post('http://192.168.0.8:3000/add-product',
         headers: {"Content-Type": "application/json"}, body: object);
-    products.add(obj);
-    print(res.statusCode);
+    products.add(product.toMap());
+    print(res);
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MaterialApp(
+            home: Layout(),
+          ),
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
-        children: <Widget>[
-          Text(
-            'Add Product',
-            style: TextStyle(fontSize: 34),
-          ),
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'Name',
+      child: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Text(
+              'Add Product',
+              style: TextStyle(fontSize: 34),
             ),
-            style: TextStyle(fontSize: 20),
-            controller: nameController,
-          ),
-          TextField(
-            decoration: InputDecoration(
-              labelText: 'Price',
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Name',
+              ),
+              style: TextStyle(fontSize: 20),
+              controller: nameController,
             ),
-            controller: priceController,
-            style: TextStyle(fontSize: 20),
-            keyboardType: TextInputType.number,
-          ),
-          Container(
-            child: RaisedButton(
-              child: Text('Submit',
-                  style: TextStyle(fontSize: 20, color: Colors.white)),
-              onPressed: onSubmit,
-              color: Colors.green,
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Price',
+              ),
+              controller: priceController,
+              style: TextStyle(fontSize: 20),
+              keyboardType: TextInputType.number,
             ),
-            margin: EdgeInsets.symmetric(vertical: 15, horizontal: 0),
-          ),
-        ],
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Description',
+              ),
+              style: TextStyle(fontSize: 20),
+              controller: descpController,
+              minLines: 5,
+              maxLines: 5,
+              keyboardType: TextInputType.multiline,
+            ),
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Image Url',
+              ),
+              style: TextStyle(fontSize: 20),
+              controller: imageController,
+            ),
+            Container(
+              child: RaisedButton(
+                child: Text('Submit',
+                    style: TextStyle(fontSize: 20, color: Colors.white)),
+                onPressed: () => onSubmit(context),
+                color: Colors.green,
+              ),
+              margin: EdgeInsets.symmetric(vertical: 15, horizontal: 0),
+            ),
+          ],
+        ),
       ),
       padding: EdgeInsets.all(5),
     );

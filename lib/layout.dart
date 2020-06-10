@@ -6,13 +6,26 @@ import './addProduct.dart';
 import './home.dart';
 
 class Layout extends StatefulWidget {
+  Layout(this.jwt, this.payload);
+
+  factory Layout.fromBase64(String jwt) => Layout(
+      jwt,
+      json.decode(
+          ascii.decode(base64.decode(base64.normalize(jwt.split(".")[1])))));
+
+  final String jwt;
+  final Map<String, dynamic> payload;
+
   @override
-  LayoutState createState() => LayoutState();
+  LayoutState createState() => LayoutState(this.jwt, this.payload);
 }
 
 class LayoutState extends State<Layout> {
   var products;
+  final String jwt;
+  final Map<String, dynamic> payload;
 
+  LayoutState(this.jwt, this.payload);
   @override
   void initState() {
     // TODO: implement initState

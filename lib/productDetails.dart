@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import './product.model.dart';
 import './layout.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ProductDetails extends StatefulWidget {
   final ProductModel product;
@@ -20,6 +21,7 @@ class _ProductDetailsState extends State<ProductDetails> {
   ProductModel product;
   final String p_id;
   ProductModel newProduct;
+  var storage = FlutterSecureStorage();
 
   _ProductDetailsState({
     @required this.product,
@@ -41,11 +43,13 @@ class _ProductDetailsState extends State<ProductDetails> {
         body: jsonEncode(newProduct.toMap()),
         headers: {"Content-Type": "application/json"});
     print(response.body);
+    var jwt = await storage.read(key: "jwt");
+
     Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => MaterialApp(
-            home: Layout(),
+            home: Layout.fromBase64(jwt),
           ),
         ));
   }
@@ -95,7 +99,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                     color: Colors.blue,
                     onPressed: () => editProduct(context),
                     child: Text(
-                      'Okay',
+                      'Edit',
                       style: TextStyle(fontSize: 18.0, color: Colors.white),
                     ),
                   ),
@@ -108,10 +112,10 @@ class _ProductDetailsState extends State<ProductDetails> {
                       Navigator.of(context).pop();
                     },
                     child: Text(
-                      'Cancel!',
+                      'Cancel',
                       style: TextStyle(fontSize: 18.0, color: Colors.white),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -128,70 +132,81 @@ class _ProductDetailsState extends State<ProductDetails> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Details'),
+        actions: <Widget>[
+          RaisedButton(
+            onPressed: () => openEditModal(context, product),
+            child: Text(
+              'EDIT',
+              style: TextStyle(
+                  color: Colors.white, fontSize: 18, letterSpacing: 2),
+            ),
+            color: Colors.blue,
+          )
+        ],
       ),
-      body: Container(
-        child: Card(
-          child: Container(
-            child: Column(
-              children: <Widget>[
-                Image.network(
+      body: SingleChildScrollView(
+        child: Container(
+          child: Column(
+            children: <Widget>[
+              Container(
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      product.name,
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                    ),
+                    RatingBarIndicator(
+                        rating: product.rating,
+                        itemBuilder: (context, index) => Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                            ),
+                        itemCount: 5,
+                        itemSize: 20.0,
+                        direction: Axis.horizontal),
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ),
+                padding: EdgeInsets.fromLTRB(0, 0, 0, 15),
+                margin: EdgeInsets.fromLTRB(8, 0, 0, 8),
+              ),
+              Container(
+                child: Image.network(
                   product.imageUrl,
                   fit: BoxFit.contain,
-                  width: 380,
                 ),
-                Container(
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        child: Text(
-                          '\$${product.price}',
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.purple),
-                        ),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.purple, width: 3)),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                margin: EdgeInsets.fromLTRB(10, 0, 10, 5),
+              ),
+              Container(
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      '\$${product.price}',
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.purple),
+                    ),
+                    Text(
+                      product.description,
+                      style: TextStyle(
+                        fontSize: 15,
                       ),
-                      Text(
-                        product.name,
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        product.description,
-                        style: TextStyle(
-                          fontSize: 20,
-                        ),
-                      ),
-                      RatingBarIndicator(
-                          rating: product.rating,
-                          itemBuilder: (context, index) => Icon(
-                                Icons.star,
-                                color: Colors.amber,
-                              ),
-                          itemCount: 5,
-                          itemSize: 30.0,
-                          direction: Axis.horizontal),
-                      RaisedButton(
-                        onPressed: () => openEditModal(context, product),
-                        child: Text('Edit'),
-                      )
-                    ],
-                  ),
-                  width: MediaQuery.of(context).size.width,
-                  margin: EdgeInsets.symmetric(horizontal: 0, vertical: 20),
-                )
-              ],
-            ),
-            padding: EdgeInsets.symmetric(horizontal: 0, vertical: 20),
+                      textAlign: TextAlign.left,
+                    ),
+                  ],
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                ),
+                width: double.infinity,
+                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                height: 130,
+              )
+            ],
           ),
-          elevation: 8,
-          margin: EdgeInsets.fromLTRB(18, 5, 18, 5),
+          padding: EdgeInsets.symmetric(horizontal: 0, vertical: 20),
         ),
-        height: 800,
       ),
     );
   }

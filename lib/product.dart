@@ -12,7 +12,7 @@ class Product extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Container(
-        child: Row(
+        child: Row( 
           children: <Widget>[
             Image.network(product.imageUrl,fit: BoxFit.cover,width:150),
             Container(

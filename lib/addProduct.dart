@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import './product.model.dart';
 import './layout.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AddProduct extends StatefulWidget {
   var products;
@@ -17,7 +18,7 @@ class AddProduct extends StatefulWidget {
 class _AddProductState extends State<AddProduct> {
   var products;
   _AddProductState(this.products);
-
+  var storage = FlutterSecureStorage();
   final nameController = TextEditingController();
   final priceController = TextEditingController();
   final descpController = TextEditingController();
@@ -36,11 +37,12 @@ class _AddProductState extends State<AddProduct> {
         headers: {"Content-Type": "application/json"}, body: object);
     products.add(product.toMap());
     print(res);
+    var jwt = await storage.read(key: "jwt");
     Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => MaterialApp(
-            home: Layout(),
+            home: Layout.fromBase64(jwt),
           ),
         ));
   }

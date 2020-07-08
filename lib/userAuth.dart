@@ -21,7 +21,7 @@ class _UserAuthState extends State<UserAuth> {
       'email': email,
       'password': password,
     };
-    var res = await http.post('http://192.168.0.8:3000/login',
+    var res = await http.post('http://a244dae0ac7b.ngrok.io/login',
         body: jsonEncode(user), headers: {"Content-Type": "application/json"});
     if (res.statusCode == 200)
       return res.body;
@@ -35,7 +35,7 @@ class _UserAuthState extends State<UserAuth> {
       'password': password,
     };
     print(user);
-    var res = await http.post('http://192.168.0.8:3000/signup',
+    var res = await http.post('http://a244dae0ac7b.ngrok.io/signup',
         body: jsonEncode(user), headers: {"Content-Type": "application/json"});
     return res.statusCode;
   }

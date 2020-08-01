@@ -34,7 +34,7 @@ class LayoutState extends State<Layout> {
   }
 
   _fetchProducts() async {
-    var res = await http.get('http://a244dae0ac7b.ngrok.io/home');
+    var res = await http.get('http://0110ac49221d.ngrok.io/home');
 
     setState(() {
       products = jsonDecode(res.body);

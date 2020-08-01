@@ -39,7 +39,7 @@ class _ProductDetailsState extends State<ProductDetails> {
       );
     });
     var response = await http.put(
-        'http://a244dae0ac7b.ngrok.io/edit-product/' + p_id,
+        'http://0110ac49221d.ngrok.io/edit-product/' + p_id,
         body: jsonEncode(newProduct.toMap()),
         headers: {"Content-Type": "application/json"});
     print(response.body);

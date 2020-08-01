@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:google_fonts/google_fonts.dart';
+
 import './layout.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -21,7 +23,7 @@ class _UserAuthState extends State<UserAuth> {
       'email': email,
       'password': password,
     };
-    var res = await http.post('http://a244dae0ac7b.ngrok.io/login',
+    var res = await http.post('http://0110ac49221d.ngrok.io/login',
         body: jsonEncode(user), headers: {"Content-Type": "application/json"});
     if (res.statusCode == 200)
       return res.body;
@@ -35,7 +37,7 @@ class _UserAuthState extends State<UserAuth> {
       'password': password,
     };
     print(user);
-    var res = await http.post('http://a244dae0ac7b.ngrok.io/signup',
+    var res = await http.post('http://0110ac49221d.ngrok.io/signup',
         body: jsonEncode(user), headers: {"Content-Type": "application/json"});
     return res.statusCode;
   }
@@ -45,61 +47,99 @@ class _UserAuthState extends State<UserAuth> {
     return Scaffold(
       body: Container(
         child: SingleChildScrollView(
-          child: Container(
-            child: Column(
-              children: <Widget>[
-                TextField(
-                  decoration: InputDecoration(labelText: 'Email'),
-                  style: TextStyle(fontSize: 18),
-                  controller: _emailController,
+          child: Column(
+            children: <Widget>[
+              Container(
+                child: Text(
+                  'WebMart',
+                  style: GoogleFonts.kronaOne(
+                    fontSize: 50,
+                    color: Colors.white,
+                  ),
                 ),
-                TextField(
-                  decoration: InputDecoration(labelText: 'Password'),
-                  style: TextStyle(fontSize: 18),
-                  controller: _passwordController,
+                margin: EdgeInsets.fromLTRB(0, 60, 0, 0),
+              ),
+              Container(
+                child: Column(
+                  children: <Widget>[
+                    TextField(
+                      decoration: InputDecoration(labelText: 'Email'),
+                      style: TextStyle(fontSize: 20),
+                      controller: _emailController,
+                    ),
+                    TextField(
+                      decoration: InputDecoration(labelText: 'Password'),
+                      style: TextStyle(fontSize: 20),
+                      controller: _passwordController,
+                      obscureText: true,
+                    ),
+                    Container(
+                      height: 30,
+                    ),
+                    Row(
+                      children: <Widget>[
+                        RaisedButton(
+                          child: Text(
+                            'Login',
+                            style: TextStyle(fontSize: 20, color: Colors.white),
+                          ),
+                          color: Colors.teal,
+                          padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                          onPressed: () async {
+                            var jwt = await attemptLogIn(
+                                this._emailController.text,
+                                this._passwordController.text);
+                            if (jwt != null) {
+                              storage.write(key: "jwt", value: jwt);
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          Layout.fromBase64(jwt)));
+                            } else {
+                              print("No such account exists");
+                            }
+                          },
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              side: BorderSide(color: Colors.white)),
+                        ),
+                        RaisedButton(
+                          child: Text(
+                            'Signup',
+                            style: TextStyle(fontSize: 20, color: Colors.white),
+                          ),
+                          color: Colors.teal,
+                          padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                          onPressed: () async {
+                            var resStatusCode = await attemptSignup(
+                                this._emailController.text,
+                                this._passwordController.text);
+                            if (resStatusCode == 201) {
+                              print('Signup successful');
+                            } else if (resStatusCode == 409) {
+                              print('userName already registered');
+                            } else {
+                              print('some unknown error occured');
+                            }
+                          },
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                              side: BorderSide(color: Colors.teal)),
+                        ),
+                      ],
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    )
+                  ],
                 ),
-                RaisedButton(
-                  child: Text('Login'),
-                  onPressed: () async {
-                    var jwt = await attemptLogIn(this._emailController.text,
-                        this._passwordController.text);
-                    if (jwt != null) {
-                      storage.write(key: "jwt", value: jwt);
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Layout.fromBase64(jwt)));
-                    } else {
-                      print("No such account exists");
-                    }
-                  },
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18.0),
-                      side: BorderSide(color: Colors.teal)),
-                ),
-                RaisedButton(
-                  child: Text('Signup'),
-                  onPressed: () async {
-                    var resStatusCode = await attemptSignup(
-                        this._emailController.text,
-                        this._passwordController.text);
-                    if (resStatusCode == 201) {
-                      print('Signup successful');
-                    } else if (resStatusCode == 409) {
-                      print('userName already registered');
-                    } else {
-                      print('some unknown error occured');
-                    }
-                  },
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(18.0),
-                      side: BorderSide(color: Colors.teal)),
-                ),
-              ],
-            ),
-            padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-            color: Colors.white,
-            margin: EdgeInsets.fromLTRB(40, 200, 40, 200),
+                padding: EdgeInsets.fromLTRB(20, 50, 20, 50),
+                margin: EdgeInsets.fromLTRB(40, 80, 40, 80),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
+              ),
+            ],
           ),
         ),
         height: double.infinity,

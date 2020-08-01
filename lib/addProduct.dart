@@ -33,7 +33,7 @@ class _AddProductState extends State<AddProduct> {
         description: descpController.text);
 
     var object = jsonEncode(product.toMap());
-    var res = await http.post('http://a244dae0ac7b.ngrok.io/add-product',
+    var res = await http.post('http://0110ac49221d.ngrok.io/add-product',
         headers: {"Content-Type": "application/json"}, body: object);
     products.add(product.toMap());
     print(res);

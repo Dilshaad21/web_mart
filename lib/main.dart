@@ -28,12 +28,12 @@ class App extends StatelessWidget {
           if (snapshot.data != "") {
             var str = snapshot.data;
             var jwt = str.split(".");
-
             if (jwt.length != 3) {
               return UserAuth();
             } else {
               var payload = json.decode(
                   ascii.decode(base64.decode(base64.normalize(jwt[1]))));
+                print(payload);
               if (DateTime.fromMillisecondsSinceEpoch(payload["exp"] * 1000)
                   .isAfter(DateTime.now())) {
                 return Layout(str, payload);

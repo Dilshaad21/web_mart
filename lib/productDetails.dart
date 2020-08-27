@@ -10,23 +10,37 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class ProductDetails extends StatefulWidget {
   final ProductModel product;
   final String p_id;
-  ProductDetails({this.product, this.p_id});
+  final String userID;
+  final showEditButton;
+  ProductDetails({this.product, this.p_id, this.userID, this.showEditButton});
 
   @override
-  _ProductDetailsState createState() =>
-      _ProductDetailsState(product: product, p_id: p_id);
+  _ProductDetailsState createState() => _ProductDetailsState(
+      product: product,
+      p_id: p_id,
+      userID: userID,
+      showEditButton: showEditButton);
 }
 
 class _ProductDetailsState extends State<ProductDetails> {
   ProductModel product;
   final String p_id;
   ProductModel newProduct;
+  final String userID;
+  final showEditButton;
   var storage = FlutterSecureStorage();
 
   _ProductDetailsState({
     @required this.product,
     @required this.p_id,
+    @required this.userID,
+    @required this.showEditButton,
   });
+
+  Future<String> get fetchUserId async {
+    var val = await storage.read(key: "userId");
+    return val;
+  }
 
   editProduct(context) async {
     setState(() {
@@ -36,15 +50,15 @@ class _ProductDetailsState extends State<ProductDetails> {
         imageUrl: product.imageUrl,
         price: product.price,
         rating: product.rating,
+        sellerID: product.sellerID,
       );
     });
     var response = await http.put(
-        'http://0110ac49221d.ngrok.io/edit-product/' + p_id,
+        'http://5b83b22353ab.ngrok.io/product/edit-product/' + p_id,
         body: jsonEncode(newProduct.toMap()),
         headers: {"Content-Type": "application/json"});
     print(response.body);
     var jwt = await storage.read(key: "jwt");
-
     Navigator.push(
         context,
         MaterialPageRoute(
@@ -127,16 +141,53 @@ class _ProductDetailsState extends State<ProductDetails> {
         context: context, builder: (BuildContext context) => simpleDialog);
   }
 
+  addToCart() async {
+    var obj = {
+      'p_id': p_id,
+      'p_name': product.name,
+      'p_price': product.price,
+      'status': 'standby',
+      'buyerId': userID,
+    };
+
+    var response = await http.post(
+      'http://5b83b22353ab.ngrok.io/product/order',
+      body: jsonEncode(obj),
+      headers: {"Content-Type": "application/json"},
+    );
+    
+    print(response);
+    var jwt = await storage.read(key: "jwt");
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MaterialApp(
+            home: Layout.fromBase64(jwt),
+          ),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Details'),
         actions: <Widget>[
+          showEditButton
+              ? RaisedButton(
+                  onPressed: () => openEditModal(context, product),
+                  child: Text(
+                    'EDIT',
+                    style: TextStyle(
+                        color: Colors.white, fontSize: 18, letterSpacing: 2),
+                  ),
+                  color: Colors.blue,
+                )
+              : Container(),
           RaisedButton(
-            onPressed: () => openEditModal(context, product),
+            onPressed: addToCart,
             child: Text(
-              'EDIT',
+              'ADD TO CART',
               style: TextStyle(
                   color: Colors.white, fontSize: 18, letterSpacing: 2),
             ),

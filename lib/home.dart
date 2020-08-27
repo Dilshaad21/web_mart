@@ -14,11 +14,13 @@ class Home extends StatelessWidget {
   ];
 
   final List<dynamic> products;
+  final String userID;
 
-  Home(@required this.products);
+  Home(@required this.products, @required this.userID);
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       child: Column(
         children: <Widget>[
@@ -32,7 +34,7 @@ class Home extends StatelessWidget {
                     ))
                 .toList(),
           ),
-          ProductList(products),
+          ProductList(products, userID),
         ],
       ),
     );

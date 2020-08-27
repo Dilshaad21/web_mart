@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import './addProduct.dart';
 import './home.dart';
+import './cart.dart';
+import './userAuth.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:convert' show json, base64, ascii;
 
 class Layout extends StatefulWidget {
   Layout(this.jwt, this.payload);
@@ -23,7 +27,8 @@ class Layout extends StatefulWidget {
 class LayoutState extends State<Layout> {
   var products;
   final String jwt;
-  final Map<String, dynamic> payload;
+  final payload;
+  final storage = FlutterSecureStorage();
 
   LayoutState(this.jwt, this.payload);
   @override
@@ -34,7 +39,7 @@ class LayoutState extends State<Layout> {
   }
 
   _fetchProducts() async {
-    var res = await http.get('http://0110ac49221d.ngrok.io/home');
+    var res = await http.get('http://5b83b22353ab.ngrok.io/home');
 
     setState(() {
       products = jsonDecode(res.body);
@@ -45,11 +50,15 @@ class LayoutState extends State<Layout> {
 
   _displayContents(route) {
     print(products);
+    
+    var userId = payload['email'];
     switch (route) {
       case '/home':
-        return Home(products);
+        return Home(products, userId);
       case '/add-product':
-        return AddProduct(products);
+        return AddProduct(products, userId);
+      case '/cart':
+        return Cart(userId);
     }
   }
 
@@ -64,7 +73,7 @@ class LayoutState extends State<Layout> {
             padding: EdgeInsets.zero,
             children: <Widget>[
               DrawerHeader(
-                child: Text('User'),
+                child: Text(payload['email']),
                 decoration: BoxDecoration(color: Colors.blue),
               ),
               ListTile(
@@ -82,6 +91,26 @@ class LayoutState extends State<Layout> {
                       navigator = '/add-product';
                     });
                     Navigator.pop(context);
+                  }),
+              ListTile(
+                  title: Text('Cart'),
+                  onTap: () {
+                    setState(() {
+                      navigator = '/cart';
+                    });
+                    Navigator.pop(context);
+                  }),
+              ListTile(
+                  title: Text('Logout'),
+                  onTap: () async {
+                    await storage.deleteAll();
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => MaterialApp(
+                            home: UserAuth(),
+                          ),
+                        ));
                   }),
             ],
           ),

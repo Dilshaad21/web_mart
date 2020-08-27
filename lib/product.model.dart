@@ -6,21 +6,24 @@ class ProductModel {
   final double rating;
   final String description;
   final String imageUrl;
+  final String sellerID;
 
   ProductModel(
       {@required this.name,
       @required this.price,
       @required this.rating,
       @required this.description,
-      @required this.imageUrl,});
-  
+      @required this.imageUrl,
+      @required this.sellerID});
+
   Map<String, dynamic> toMap() {
     return {
       'name': name,
       'price': price,
       'rating': rating,
       'description': description,
-      'imageUrl':imageUrl,
+      'imageUrl': imageUrl,
+      'sellerID': sellerID,
     };
   }
 }

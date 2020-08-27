@@ -23,7 +23,7 @@ class _UserAuthState extends State<UserAuth> {
       'email': email,
       'password': password,
     };
-    var res = await http.post('http://0110ac49221d.ngrok.io/login',
+    var res = await http.post('http://5b83b22353ab.ngrok.io/user/login',
         body: jsonEncode(user), headers: {"Content-Type": "application/json"});
     if (res.statusCode == 200)
       return res.body;
@@ -37,7 +37,7 @@ class _UserAuthState extends State<UserAuth> {
       'password': password,
     };
     print(user);
-    var res = await http.post('http://0110ac49221d.ngrok.io/signup',
+    var res = await http.post('http://5b83b22353ab.ngrok.io/user/signup',
         body: jsonEncode(user), headers: {"Content-Type": "application/json"});
     return res.statusCode;
   }
@@ -91,6 +91,7 @@ class _UserAuthState extends State<UserAuth> {
                                 this._passwordController.text);
                             if (jwt != null) {
                               storage.write(key: "jwt", value: jwt);
+                              storage.write(key:"userId",value: this._emailController.text);
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(

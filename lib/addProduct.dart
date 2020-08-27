@@ -8,16 +8,18 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AddProduct extends StatefulWidget {
   var products;
-
-  AddProduct(this.products);
+  final userID;
+  AddProduct(this.products, this.userID);
 
   @override
-  _AddProductState createState() => _AddProductState(products);
+  _AddProductState createState() => _AddProductState(products, userID);
 }
 
 class _AddProductState extends State<AddProduct> {
   var products;
-  _AddProductState(this.products);
+  final userID;
+
+  _AddProductState(this.products, this.userID);
   var storage = FlutterSecureStorage();
   final nameController = TextEditingController();
   final priceController = TextEditingController();
@@ -30,11 +32,14 @@ class _AddProductState extends State<AddProduct> {
         price: double.parse(priceController.text),
         rating: 0.00,
         imageUrl: imageController.text,
-        description: descpController.text);
+        description: descpController.text,
+        sellerID: userID);
 
     var object = jsonEncode(product.toMap());
-    var res = await http.post('http://0110ac49221d.ngrok.io/add-product',
-        headers: {"Content-Type": "application/json"}, body: object);
+    var res = await http.post(
+        'http://5b83b22353ab.ngrok.io/product/add-product',
+        headers: {"Content-Type": "application/json"},
+        body: object);
     products.add(product.toMap());
     print(res);
     var jwt = await storage.read(key: "jwt");

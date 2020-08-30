@@ -36,9 +36,10 @@ class _AddProductState extends State<AddProduct> {
         sellerID: userID);
 
     var object = jsonEncode(product.toMap());
+    var token = await storage.read(key: "jwt");
     var res = await http.post(
         'http://5b83b22353ab.ngrok.io/product/add-product',
-        headers: {"Content-Type": "application/json"},
+        headers: {"Content-Type": "application/json", "auth-token": token},
         body: object);
     products.add(product.toMap());
     print(res);

@@ -149,13 +149,14 @@ class _ProductDetailsState extends State<ProductDetails> {
       'status': 'standby',
       'buyerId': userID,
     };
+    var token = await storage.read(key: "jwt");
 
     var response = await http.post(
       'http://5b83b22353ab.ngrok.io/product/order',
       body: jsonEncode(obj),
-      headers: {"Content-Type": "application/json"},
+      headers: {"Content-Type": "application/json", "auth-token": token},
     );
-    
+
     print(response);
     var jwt = await storage.read(key: "jwt");
     Navigator.push(

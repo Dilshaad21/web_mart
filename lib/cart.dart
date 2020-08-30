@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class Cart extends StatefulWidget {
   final userId;
@@ -16,11 +17,22 @@ class _CartState extends State<Cart> {
   var orders;
   final userId;
   var totalPrice;
+  var token;
+  var storage = FlutterSecureStorage();
   _CartState(this.userId);
 
+  @override
+  void initState() {
+    super.initState();
+    populateOrders();
+  }
+
   populateOrders() async {
-    var objs =
-        await http.get('http://03bdacf8f875.ngrok.io/product/order' + userId);
+    var token = await storage.read(key: "jwt");
+    var objs = await http
+        .get('http://03bdacf8f875.ngrok.io/product/order' + userId, headers: {
+      "auth-token": token,
+    });
 
     setState(() {
       orders = jsonDecode(objs.body);
@@ -31,13 +43,6 @@ class _CartState extends State<Cart> {
     var response = await http
         .get('http://03bdacf8f875.ngrok.io/product/order/checkout' + userId);
     print(response.body);
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    populateOrders();
   }
 
   @override

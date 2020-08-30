@@ -39,7 +39,9 @@ class LayoutState extends State<Layout> {
   }
 
   _fetchProducts() async {
-    var res = await http.get('http://5b83b22353ab.ngrok.io/home');
+    var token = await storage.read(key: "jwt");
+    var res = await http.get('http://5b83b22353ab.ngrok.io/home',
+        headers: {"auth-token": token});
 
     setState(() {
       products = jsonDecode(res.body);
@@ -50,7 +52,7 @@ class LayoutState extends State<Layout> {
 
   _displayContents(route) {
     print(products);
-    
+
     var userId = payload['email'];
     switch (route) {
       case '/home':
